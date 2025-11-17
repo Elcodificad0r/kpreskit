@@ -1,0 +1,52 @@
+/* === ACTIVA TAILWIND 4 === */
+@import "tailwindcss";
+
+/* === IMPORTA TIPOGRAFÍAS GOOGLE === */
+@import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Estonia&family=Geist:wght@300;700&display=swap');
+
+/* === VARIABLES GLOBALES === */
+:root {
+  --font-major-mono: "Major Mono Display", monospace;
+  --font-geist-light: "Geist", sans-serif;
+  --font-geist-bold: "Geist", sans-serif;
+  --font-estonia: "Estonia", cursive;
+}
+
+/* === THEME (TAILWIND 4) === */
+@theme {
+  --font-majorMono: var(--font-major-mono);
+  --font-geistLight: var(--font-geist-light);
+  --font-geistBold: var(--font-geist-bold);
+  --font-estonia: var(--font-estonia);
+}
+
+/* Opcional: fondo que usas tú */
+body {
+  background: #fdf9f1;
+}
+
+/* Fuerza el dark mode con prioridad absoluta */
+html.dark * {
+  color: var(--tw-prose-body, #DC9E00) !important;
+  border-color: #DC9E00 !important;
+}
+
+html.dark body {
+  background-color: #0F0F0F !important;
+}
+
+html.dark .dark\:text-darkAccent {
+  color: #DC9E00 !important;
+}
+
+html.dark .dark\:bg-darkBg {
+  background-color: #0F0F0F !important;
+}
+
+/* Transición general */
+.theme-transition * {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
