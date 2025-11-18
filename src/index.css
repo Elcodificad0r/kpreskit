@@ -1,8 +1,8 @@
+/* === IMPORTA TIPOGRAFÍAS GOOGLE (DEBE IR ARRIBA DEL TODO) === */
+@import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Estonia&family=Geist:wght@300;700&display=swap');
+
 /* === ACTIVA TAILWIND 4 === */
 @import "tailwindcss";
-
-/* === IMPORTA TIPOGRAFÍAS GOOGLE === */
-@import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Estonia&family=Geist:wght@300;700&display=swap');
 
 /* === VARIABLES GLOBALES === */
 :root {
@@ -20,12 +20,11 @@
   --font-estonia: var(--font-estonia);
 }
 
-/* Opcional: fondo que usas tú */
 body {
   background: #fdf9f1;
 }
 
-/* Fuerza el dark mode con prioridad absoluta */
+/* DARK MODE */
 html.dark * {
   color: var(--tw-prose-body, #DC9E00) !important;
   border-color: #DC9E00 !important;
@@ -43,7 +42,7 @@ html.dark .dark\:bg-darkBg {
   background-color: #0F0F0F !important;
 }
 
-/* Transición general */
+/* TRANSICIÓN */
 .theme-transition * {
   transition:
     background-color 0.35s ease,
