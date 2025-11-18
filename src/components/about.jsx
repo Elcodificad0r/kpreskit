@@ -11,7 +11,7 @@ const prefix = import.meta.env.BASE_URL || "/";
 
 // Genera rutas a /public/img/aboutX.png
 const IMAGES = Array.from({ length: 20 }, (_, i) => {
-  return `${prefix}img/about${i === 0 ? "" : i}.png`;
+  return `${prefix}img/about${i === 0 ? "" : i}.webp`;
 });
 
 

@@ -10,8 +10,8 @@ export default function Home() {
   const groupRef = useRef(null);
 
 const images = [
-  `${import.meta.env.BASE_URL}img/cd-portada.png`,
-  `${import.meta.env.BASE_URL}img/cd-portada1.png`,
+  `${import.meta.env.BASE_URL}img/cd-portada.webp`,
+  `${import.meta.env.BASE_URL}img/cd-portada1.webp`,
 ];
 
 

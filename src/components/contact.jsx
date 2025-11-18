@@ -96,7 +96,7 @@ export default function Contact() {
               }`}
             >
               <img
-                src={`${prefix}img/contact-disk.png`}
+                src={`${prefix}img/contact-disk.webp`}
                 className="absolute z-10 
                 w-[120%] h-[120%]
                 -top-20
@@ -107,7 +107,7 @@ export default function Contact() {
               />
 
               <img
-                src={`${prefix}img/contact-cover.png`}
+                src={`${prefix}img/contact-cover.webp`}
                 className="absolute z-20 
                 w-[95%] h-[95%]
                 left-1/2 -translate-x-1/2
@@ -160,7 +160,7 @@ export default function Contact() {
             <div className="group relative flex items-center justify-center w-[540px] h-[540px] select-none">
               
               <img
-                src={`${prefix}img/contact-disk.png`}
+                src={`${prefix}img/contact-disk.webp`}
                 className="absolute z-10 w-[90%] h-[90%] 
                 translate-x-10 
                 translate-y-2
@@ -171,7 +171,7 @@ export default function Contact() {
               />
 
               <img
-                src={`${prefix}img/contact-cover.png`}
+                src={`${prefix}img/contact-cover.webp`}
                 className="absolute z-20 w-[100%] h-[100%] object-contain transition-all duration-700 ease-out 
                 group-hover:-translate-x-6 group-hover:-translate-y-3 group-hover:scale-[0.985]"
               />

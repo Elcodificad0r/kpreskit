@@ -4,17 +4,17 @@ import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 const TRACKS = [
   {
     id: 1,
-    img: `${import.meta.env.BASE_URL}img/cassette1.png`,
+    img: `${import.meta.env.BASE_URL}img/cassette1.webp`,
     url: "https://api.soundcloud.com/tracks/2208278441"
   },
   {
     id: 2,
-    img: `${import.meta.env.BASE_URL}img/cassette2.png`,
+    img: `${import.meta.env.BASE_URL}img/cassette2.webp`,
     url: "https://api.soundcloud.com/tracks/1234567890"
   },
   {
     id: 3,
-    img: `${import.meta.env.BASE_URL}img/cassette3.png`,
+    img: `${import.meta.env.BASE_URL}img/cassette3.webp`,
     url: "https://api.soundcloud.com/tracks/9876543210"
   }
 ];
