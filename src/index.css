@@ -50,3 +50,7 @@ html.dark .dark\:bg-darkBg {
     color 0.35s ease,
     border-color 0.35s ease;
 }
+
+html {
+  scroll-behavior: smooth;
+}

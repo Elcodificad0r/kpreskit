@@ -1,4 +1,4 @@
-/* CONTACT — FINAL — solo fix dark mode */
+/* CONTACT — FINAL — solo fix dark mode + rutas public/img */
 
 import React, { useEffect, useState } from "react";
 import { Mail, Instagram } from "lucide-react";
@@ -7,6 +7,9 @@ export default function Contact() {
   const [isMobile, setIsMobile] = useState(false);
   const [scrollReveal, setScrollReveal] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  /* PREFIX universal */
+  const prefix = import.meta.env.BASE_URL || "/";
 
   /* EXACTA lógica del Navbar */
   useEffect(() => {
@@ -48,7 +51,7 @@ export default function Contact() {
   }, [isMobile]);
 
   return (
-    <section
+    <section id="contact"
       className={`
         relative w-full min-h-screen flex justify-center px-6 py-16 transition-colors
         bg-[#FFFBF2] 
@@ -66,6 +69,24 @@ export default function Contact() {
           CONTACT
         </h1>
 
+{/* CTA ultra compacto */}
+<p className="mt-2 mb-8 text-center leading-tight text-sm md:text-base font-geistLight">
+  Contrata a{" "}
+  <span className="font-majorMono tracking-tight text-base md:text-lg">
+    Lu
+    <span className="font-estonia lowercase text-lg md:text-xl align-baseline">n</span>
+    <span className="font-majorMono">ARA</span>
+  </span>{" "}
+  para tocar en tu evento y disfrutar su DJ set en vivo
+</p>
+
+
+
+
+
+
+
+
         {/* MOBILE */}
         {isMobile ? (
           <>
@@ -75,7 +96,7 @@ export default function Contact() {
               }`}
             >
               <img
-                src="/src/assets/img/contact-disk.png"
+                src={`${prefix}img/contact-disk.png`}
                 className="absolute z-10 
                 w-[120%] h-[120%]
                 -top-20
@@ -86,7 +107,7 @@ export default function Contact() {
               />
 
               <img
-                src="/src/assets/img/contact-cover.png"
+                src={`${prefix}img/contact-cover.png`}
                 className="absolute z-20 
                 w-[95%] h-[95%]
                 left-1/2 -translate-x-1/2
@@ -127,7 +148,7 @@ export default function Contact() {
               </a>
 
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/karendelunaaa?igsh=MXJ1cGozZjI3eTJwMw=="
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-4 px-5 py-3 rounded-xl border border-black dark:border-white transition-all duration-300 hover:scale-105 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
@@ -139,7 +160,7 @@ export default function Contact() {
             <div className="group relative flex items-center justify-center w-[540px] h-[540px] select-none">
               
               <img
-                src="/src/assets/img/contact-disk.png"
+                src={`${prefix}img/contact-disk.png`}
                 className="absolute z-10 w-[90%] h-[90%] 
                 translate-x-10 
                 translate-y-2
@@ -150,7 +171,7 @@ export default function Contact() {
               />
 
               <img
-                src="/src/assets/img/contact-cover.png"
+                src={`${prefix}img/contact-cover.png`}
                 className="absolute z-20 w-[100%] h-[100%] object-contain transition-all duration-700 ease-out 
                 group-hover:-translate-x-6 group-hover:-translate-y-3 group-hover:scale-[0.985]"
               />

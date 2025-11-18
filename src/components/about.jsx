@@ -5,49 +5,17 @@ import { gsap } from "gsap";
  * IMPORTA TUS IMÁGENES: about.png, about1.png ... about19.png
  * Asegúrate que están en src/assets/img/
  */
-import about0 from "../assets/img/about.png";
-import about1 from "../assets/img/about1.png";
-import about2 from "../assets/img/about2.png";
-import about3 from "../assets/img/about3.png";
-import about4 from "../assets/img/about4.png";
-import about5 from "../assets/img/about5.png";
-import about6 from "../assets/img/about6.png";
-import about7 from "../assets/img/about7.png";
-import about8 from "../assets/img/about8.png";
-import about9 from "../assets/img/about9.png";
-import about10 from "../assets/img/about10.png";
-import about11 from "../assets/img/about11.png";
-import about12 from "../assets/img/about12.png";
-import about13 from "../assets/img/about13.png";
-import about14 from "../assets/img/about14.png";
-import about15 from "../assets/img/about15.png";
-import about16 from "../assets/img/about16.png";
-import about17 from "../assets/img/about17.png";
-import about18 from "../assets/img/about18.png";
-import about19 from "../assets/img/about19.png";
+// Prefijo dinámico para LOCAL y para GH Pages (kpreskit)
+const prefix = import.meta.env.BASE_URL || "/";
 
-const IMAGES = [
-  about0,
-  about1,
-  about2,
-  about3,
-  about4,
-  about5,
-  about6,
-  about7,
-  about8,
-  about9,
-  about10,
-  about11,
-  about12,
-  about13,
-  about14,
-  about15,
-  about16,
-  about17,
-  about18,
-  about19,
-];
+
+// Genera rutas a /public/img/aboutX.png
+const IMAGES = Array.from({ length: 20 }, (_, i) => {
+  return `${prefix}img/about${i === 0 ? "" : i}.png`;
+});
+
+
+
 
 export default function About() {
   const trackRef = useRef(null);

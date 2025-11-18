@@ -4,17 +4,17 @@ import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 const TRACKS = [
   {
     id: 1,
-    img: "/src/assets/img/cassette1.png",
+    img: `${import.meta.env.BASE_URL}img/cassette1.png`,
     url: "https://api.soundcloud.com/tracks/2208278441"
   },
   {
     id: 2,
-    img: "/src/assets/img/cassette2.png",
+    img: `${import.meta.env.BASE_URL}img/cassette2.png`,
     url: "https://api.soundcloud.com/tracks/1234567890"
   },
   {
     id: 3,
-    img: "/src/assets/img/cassette3.png",
+    img: `${import.meta.env.BASE_URL}img/cassette3.png`,
     url: "https://api.soundcloud.com/tracks/9876543210"
   }
 ];
@@ -105,17 +105,17 @@ export default function Work() {
 
   /** --- PLAYER UI (glassmorphism) --- */
   const PlayerUI = (
-    <div className="
+    <div
+      className="
       mt-10 flex flex-col items-center gap-6 
       px-6 py-6 rounded-2xl 
       backdrop-blur-2xl 
       bg-white/20 dark:bg-white/10 
       border border-white/30 dark:border-white/20
       shadow-xl
-    ">
-
+    "
+    >
       <div className="flex items-center gap-12 text-black dark:text-white">
-
         <button onClick={prev}>
           <SkipBack size={36} className="text-black dark:text-white" />
         </button>
@@ -169,17 +169,37 @@ export default function Work() {
   );
 
   return (
-    <div className="flex flex-col items-center pt-24 pb-24 transition-all duration-700">
+    <div id="work" className="flex flex-col items-center pt-24 pb-24 transition-all duration-700">
+
+        {/* --- CTA pequeño elegante --- */}
+<p className="mt-6 mb-4 text-center leading-tight text-[15px] md:text-base font-geistLight opacity-80">
+  Da clic en una cinta para{" "}
+  <span className="font-estonia text-[19px] md:text-xl tracking-wide">
+    escuchar
+  </span>{" "}
+  los live sets de{" "}
+  <span className="font-majorMono tracking-tight text-base md:text-lg">
+    Lu
+    <span className="font-estonia lowercase text-lg md:text-xl align-baseline">
+      n
+    </span>
+    <span className="font-majorMono">ARA</span>
+  </span>
+</p>
+
 
       {/* --- Cassettes --- */}
-      <div className="
+      <div
+        className={`
         flex flex-col md:flex-row 
         gap-8 md:gap-16 
         mt-10
-      ">
+
+        ${!isMobile && current ? "md:mb-20" : ""} 
+      `}
+      >
         {TRACKS.map((t) => (
           <div key={t.id} className="flex flex-col items-center">
-
             <div
               onClick={() => loadTrack(t)}
               className={`
@@ -189,9 +209,10 @@ export default function Work() {
                 rounded-2xl overflow-hidden
                 transition-all duration-500 ease-out
 
-                ${current?.id === t.id
-                  ? "scale-125 shadow-2xl backdrop-blur-2xl bg-white/20 dark:bg-white/10 animate-[pulse_6s_ease_infinite]"
-                  : "hover:scale-[1.30]  hover:shadow-2xl"
+                ${
+                  current?.id === t.id
+                    ? "scale-125 shadow-2xl backdrop-blur-2xl bg-white/20 dark:bg-white/10 animate-[pulse_6s_ease_infinite]"
+                    : "hover:scale-[1.30] hover:shadow-2xl"
                 }
 
                 ${current && current.id !== t.id ? "md:translate-x-2" : ""}
@@ -200,7 +221,7 @@ export default function Work() {
                 background:
                   current?.id === t.id
                     ? "linear-gradient(135deg, rgba(255,165,140,0.35), rgba(235,140,150,0.35))"
-                    : "transparent",
+                    : "transparent"
               }}
             >
               <img
@@ -214,6 +235,8 @@ export default function Work() {
           </div>
         ))}
       </div>
+
+      
 
       {/* Desktop: player below all */}
       {!isMobile && current && PlayerUI}

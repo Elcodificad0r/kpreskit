@@ -1,7 +1,7 @@
 import React,{ useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import cd1 from "../assets/img/cd-portada.png";
-import cd2 from "../assets/img/cd-portada1.png";
+import.meta.env.BASE_URL
+
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -9,7 +9,11 @@ export default function Home() {
   const arrowRef = useRef(null);
   const groupRef = useRef(null);
 
-  const images = [cd1, cd2];
+const images = [
+  `${import.meta.env.BASE_URL}img/cd-portada.png`,
+  `${import.meta.env.BASE_URL}img/cd-portada1.png`,
+];
+
 
   useEffect(() => {
     // Seleccionar imagen random
@@ -75,7 +79,7 @@ export default function Home() {
   };
 
   return (
-    <section className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
+    <section id="home" className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
       {/* Disco en el centro */}
       {selectedImage && (
         <img
