@@ -91,39 +91,91 @@ export default function About() {
       });
     }
 
-    // MOUSE INTERACTION: accelerate + repel
-    const onMouseMove = (e) => {
-      if (!track) return;
-      const rect = container.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const center = rect.width / 2;
-      const distanceToCenter = Math.abs(mouseX - center);
-      // speed factor: closer to center -> faster
-      const maxSpeed = 6; // times faster
-      const factor = 1 + (1 - Math.min(distanceToCenter / center, 1)) * (maxSpeed - 1);
-      if (loopTween.current) loopTween.current.timeScale(factor);
+   // 💥 EXPERIMENTAL: GAPS + WARP EFFECT + SPEED BOOST
+const onMouseMove = (e) => {
+  if (!track) return;
+  if (window.innerWidth < 768) return; // ❌ móvil sin efectos
 
-      // repel effect for each image: vertical offset and subtle scale
-      const imgs = imgRefs.current;
-      imgs.forEach((el) => {
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const elCenter = r.left + r.width / 2 - rect.left;
-        const dist = Math.abs(mouseX - elCenter);
-        const repelStrength = Math.max(0, 120 - dist); // within 120px feel repel
-        const y = - (repelStrength / 6); // up to ~ -20 px
-        const s = 1 - Math.min(0.08, repelStrength / 1200); // tiny scale down
-        gsap.to(el, { y, scale: s, duration: 0.35, ease: "power2.out" });
-      });
-    };
+  const rect = container.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const center = rect.width / 2;
+  const distanceToCenter = Math.abs(mouseX - center);
 
-    const onMouseLeave = () => {
-      if (loopTween.current) loopTween.current.timeScale(1);
-      imgRefs.current.forEach((el) => {
-        if (!el) return;
-        gsap.to(el, { y: 0, scale: 1, duration: 0.6, ease: "power3.out" });
+  // ⚡ Aceleración intensa hacia el centro
+  const maxSpeed = 9;
+  const factor = 1 + (1 - Math.min(distanceToCenter / center, 1)) * (maxSpeed - 1);
+
+  if (loopTween.current) loopTween.current.timeScale(factor);
+
+  // 🌀 GAPS + Warp horizontal + vertical repel
+  imgRefs.current.forEach((el) => {
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const elCenter = r.left + r.width / 2 - rect.left;
+
+    // distancia horizontal entre mouse e imagen
+    const dist = mouseX - elCenter;
+    const absDist = Math.abs(dist);
+
+    // zona de efecto (más amplia)
+    const warpZone = 260;
+
+    if (absDist > warpZone) {
+      // fuera del rango → volver a su lugar
+      gsap.to(el, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 0.45,
+        ease: "power3.out",
+        overwrite: true
       });
-    };
+      return;
+    }
+
+    // Fuerza del warp (0 → fuerte, warpZone → 0)
+    const t = 1 - absDist / warpZone;
+
+    // 💨 GAP horizontal (empuja hacia los lados)
+    const x = t * (dist > 0 ? 85 : -85); // Abre el túnel
+
+    // 🌪 warp vertical + flotación
+    const y = -(t * 40);
+
+    // 🔮 scale suave para dramatismo
+    const s = 1 - t * 0.12;
+
+    // aplicar animación
+    gsap.to(el, {
+      x,
+      y,
+      scale: s,
+      duration: 0.35,
+      ease: "power3.out",
+      overwrite: true
+    });
+  });
+};
+
+// Al salir el mouse, todo vuelve suave
+const onMouseLeave = () => {
+  if (window.innerWidth < 768) return;
+
+  if (loopTween.current) loopTween.current.timeScale(1);
+
+  imgRefs.current.forEach((el) => {
+    if (!el) return;
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: "power3.out"
+    });
+  });
+};
+
+
 
     container.addEventListener("mousemove", onMouseMove);
     container.addEventListener("mouseleave", onMouseLeave);
