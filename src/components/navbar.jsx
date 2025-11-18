@@ -76,7 +76,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex gap-10 text-xl font-estonia">
+        <div className="hidden md:flex gap-10 text-3xl font-estonia">
           <a href="#home" className="text-black dark:text-darkAccent hover:opacity-70">
             home
           </a>

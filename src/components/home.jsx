@@ -2,18 +2,16 @@ import React,{ useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import.meta.env.BASE_URL
 
-
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState(null);
   const discRef = useRef(null);
   const arrowRef = useRef(null);
   const groupRef = useRef(null);
 
-const images = [
-  `${import.meta.env.BASE_URL}img/cd-portada.webp`,
-  `${import.meta.env.BASE_URL}img/cd-portada1.webp`,
-];
-
+  const images = [
+    `${import.meta.env.BASE_URL}img/cd-portada.webp`,
+    `${import.meta.env.BASE_URL}img/cd-portada1.webp`,
+  ];
 
   useEffect(() => {
     // Seleccionar imagen random
@@ -80,6 +78,7 @@ const images = [
 
   return (
     <section id="home" className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
+      
       {/* Disco en el centro */}
       {selectedImage && (
         <img
@@ -94,6 +93,7 @@ const images = [
       {/* DISCOVER MORE */}
       <div
         ref={groupRef}
+        onClick={goToWork}   // ← ÚNICO CAMBIO AÑADIDO
         className="absolute bottom-16 right-14 flex flex-col items-end cursor-pointer select-none hover:underline hover:text-orange-500"
       >
         <span className="text-5xl md:text-6xl lg:text-7xl font-[var(--font-geist-light)] tracking-tight leading-none">

@@ -20,9 +20,12 @@
   --font-estonia: var(--font-estonia);
 }
 
-body {
+html, body {
+  overflow-x: hidden !important;
+  overscroll-behavior-x: none;
   background: #fdf9f1;
 }
+
 
 /* DARK MODE */
 html.dark * {
@@ -53,3 +56,4 @@ html.dark .dark\:bg-darkBg {
 html {
   scroll-behavior: smooth;
 }
+
