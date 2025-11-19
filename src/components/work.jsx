@@ -24,6 +24,7 @@ export default function Work() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+
   const iframeRef = useRef(null);
   const widgetRef = useRef(null);
 
@@ -34,13 +35,9 @@ export default function Work() {
       widgetRef.current = window.SC.Widget(iframeRef.current);
 
       widgetRef.current.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
-        if (!e.duration || e.duration === 0) return;
-
+        if (!e.duration) return;
         let p = (e.currentPosition / e.duration) * 100;
-        if (p < 0) p = 0;
-        if (p > 100) p = 100;
-
-        setProgress(p);
+        setProgress(Math.min(Math.max(p, 0), 100));
       });
 
       widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => {
@@ -70,26 +67,18 @@ export default function Work() {
 
   const togglePlay = () => {
     if (!widgetRef.current) return;
-
-    if (isPlaying) {
-      widgetRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      widgetRef.current.play();
-      setIsPlaying(true);
-    }
+    isPlaying ? widgetRef.current.pause() : widgetRef.current.play();
+    setIsPlaying(!isPlaying);
   };
 
   const next = () => {
     const i = TRACKS.findIndex((t) => t.id === current.id);
-    const nextTrack = TRACKS[(i + 1) % TRACKS.length];
-    loadTrack(nextTrack);
+    loadTrack(TRACKS[(i + 1) % TRACKS.length]);
   };
 
   const prev = () => {
     const i = TRACKS.findIndex((t) => t.id === current.id);
-    const prevTrack = TRACKS[(i - 1 + TRACKS.length) % TRACKS.length];
-    loadTrack(prevTrack);
+    loadTrack(TRACKS[(i - 1 + TRACKS.length) % TRACKS.length]);
   };
 
   const setVolume = (v) => {
@@ -103,100 +92,105 @@ export default function Work() {
     setProgress(value);
   };
 
-  /** --- PLAYER UI (glassmorphism) --- */
-  const PlayerUI = (
-    <div
-      className="
+/** --- PLAYER UI (glassmorphism) --- */
+const PlayerUI = (
+  <div
+    className="
       mt-10 flex flex-col items-center gap-6 
       px-6 py-6 rounded-2xl 
       backdrop-blur-2xl 
       bg-white/20 dark:bg-white/10 
       border border-white/30 dark:border-white/20
       shadow-xl
+
+      w-full max-w-[360px] md:max-w-none
+      transform-gpu
     "
-    >
-      <div className="flex items-center gap-12 text-black dark:text-white">
-        <button onClick={prev}>
-          <SkipBack size={36} className="text-black dark:text-white" />
-        </button>
+    style={{
+      marginTop: isMobile ? "3.5rem" : "0", // extra gap en mobile
+    }}
+  >
+    <div className="flex items-center gap-8 md:gap-12 text-black">
 
-        <button onClick={togglePlay}>
-          {isPlaying ? (
-            <Pause size={50} className="text-black dark:text-white" />
-          ) : (
-            <Play size={50} className="text-black dark:text-white" />
-          )}
-        </button>
+      <button onClick={prev} aria-label="prev">
+        <SkipBack className="w-6 h-6 md:w-9 md:h-9 text-black" />
+      </button>
 
-        <button onClick={next}>
-          <SkipForward size={36} className="text-black dark:text-white" />
-        </button>
+      <button onClick={togglePlay} aria-label="play-pause">
+        {isPlaying ? (
+          <Pause className="w-8 h-8 md:w-12 md:h-12 text-black" />
+        ) : (
+          <Play className="w-8 h-8 md:w-12 md:h-12 text-black" />
+        )}
+      </button>
 
-        <div className="flex items-center gap-3">
-          <Volume2 size={32} className="text-black dark:text-white" />
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            defaultValue={1}
-            onChange={(e) => setVolume(e.target.value)}
-            className="
-              w-32 
-              accent-black dark:accent-white 
-              cursor-pointer
-            "
-          />
-        </div>
+      <button onClick={next} aria-label="next">
+        <SkipForward className="w-6 h-6 md:w-9 md:h-9 text-black" />
+      </button>
+
+      <div className="flex items-center gap-3">
+        <Volume2 className="w-5 h-5 md:w-8 md:h-8 text-black" />
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          defaultValue={1}
+          onChange={(e) => setVolume(e.target.value)}
+          className="
+            w-24 md:w-32 
+            accent-black 
+            cursor-pointer
+          "
+        />
       </div>
-
-      {/* Progress bar */}
-      <input
-        type="range"
-        min={0}
-        max={100}
-        step={0.1}
-        value={progress}
-        onChange={(e) => seek(e.target.value)}
-        className="
-          w-[380px] h-2 rounded-full 
-          bg-black/30 dark:bg-white/20 
-          accent-black dark:accent-white
-          cursor-pointer
-        "
-      />
     </div>
-  );
+
+    {/* Barra de progreso */}
+    <input
+      type="range"
+      min={0}
+      max={100}
+      step={0.1}
+      value={progress}
+      onChange={(e) => seek(e.target.value)}
+      className="
+        w-full md:w-[380px] h-2 rounded-full 
+        bg-black/30 
+        accent-black
+        cursor-pointer
+      "
+    />
+  </div>
+);
+
+
 
   return (
-    <div id="work" className="flex flex-col items-center pt-24 pb-24 transition-all duration-700">
+    <div id="work" className="flex flex-col items-center pt-24 pb-24">
+      
+      <p className="mt-6 mb-4 text-center leading-tight text-[15px] md:text-base font-geistLight opacity-80">
+        Da clic en una cinta para{" "}
+        <span className="font-estonia text-[19px] md:text-xl tracking-wide">
+          escuchar
+        </span>{" "}
+        los live sets de{" "}
+        <span className="font-majorMono tracking-tight text-base md:text-lg">
+          Lu
+          <span className="font-estonia lowercase text-lg md:text-xl align-baseline">
+            n
+          </span>
+          <span className="font-majorMono">ARA</span>
+        </span>
+      </p>
 
-        {/* --- CTA pequeño elegante --- */}
-<p className="mt-6 mb-4 text-center leading-tight text-[15px] md:text-base font-geistLight opacity-80">
-  Da clic en una cinta para{" "}
-  <span className="font-estonia text-[19px] md:text-xl tracking-wide">
-    escuchar
-  </span>{" "}
-  los live sets de{" "}
-  <span className="font-majorMono tracking-tight text-base md:text-lg">
-    Lu
-    <span className="font-estonia lowercase text-lg md:text-xl align-baseline">
-      n
-    </span>
-    <span className="font-majorMono">ARA</span>
-  </span>
-</p>
-
-
-      {/* --- Cassettes --- */}
       <div
         className={`
-        flex flex-col md:flex-row 
-        gap-8 md:gap-16 
-        mt-10
-
-        ${!isMobile && current ? "md:mb-20" : ""} 
-      `}
+          flex flex-col md:flex-row 
+          gap-8 md:gap-16 
+          mt-10
+          ${!isMobile && current ? "md:mb-20" : ""} 
+        `}
       >
         {TRACKS.map((t) => (
           <div key={t.id} className="flex flex-col items-center">
@@ -230,15 +224,11 @@ export default function Work() {
               />
             </div>
 
-            {/* Mobile: player under selected cassette */}
             {isMobile && current?.id === t.id && PlayerUI}
           </div>
         ))}
       </div>
 
-      
-
-      {/* Desktop: player below all */}
       {!isMobile && current && PlayerUI}
 
       <iframe
