@@ -50,6 +50,12 @@ export default function Work() {
     setCurrent(track);
     setProgress(0);
 
+    // 🔓 Desbloqueo de audio en mobile
+    try {
+      widgetRef.current.play();
+      widgetRef.current.pause();
+    } catch {}
+
     widgetRef.current.load(track.url, {
       auto_play: true,
       buying: false,
@@ -92,83 +98,73 @@ export default function Work() {
     setProgress(value);
   };
 
-/** --- PLAYER UI (glassmorphism) --- */
-const PlayerUI = (
-  <div
-    className="
-      mt-10 flex flex-col items-center gap-6 
-      px-6 py-6 rounded-2xl 
-      backdrop-blur-2xl 
-      bg-white/20 dark:bg-white/10 
-      border border-white/30 dark:border-white/20
-      shadow-xl
-
-      w-full max-w-[360px] md:max-w-none
-      transform-gpu
-    "
-    style={{
-      marginTop: isMobile ? "3.5rem" : "0", // extra gap en mobile
-    }}
-  >
-    <div className="flex items-center gap-8 md:gap-12 text-black">
-
-      <button onClick={prev} aria-label="prev">
-        <SkipBack className="w-6 h-6 md:w-9 md:h-9 text-black" />
-      </button>
-
-      <button onClick={togglePlay} aria-label="play-pause">
-        {isPlaying ? (
-          <Pause className="w-8 h-8 md:w-12 md:h-12 text-black" />
-        ) : (
-          <Play className="w-8 h-8 md:w-12 md:h-12 text-black" />
-        )}
-      </button>
-
-      <button onClick={next} aria-label="next">
-        <SkipForward className="w-6 h-6 md:w-9 md:h-9 text-black" />
-      </button>
-
-      <div className="flex items-center gap-3">
-        <Volume2 className="w-5 h-5 md:w-8 md:h-8 text-black" />
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          defaultValue={1}
-          onChange={(e) => setVolume(e.target.value)}
-          className="
-            w-24 md:w-32 
-            accent-black 
-            cursor-pointer
-          "
-        />
-      </div>
-    </div>
-
-    {/* Barra de progreso */}
-    <input
-      type="range"
-      min={0}
-      max={100}
-      step={0.1}
-      value={progress}
-      onChange={(e) => seek(e.target.value)}
+  /** --- PLAYER UI --- */
+  const PlayerUI = (
+    <div
       className="
-        w-full md:w-[380px] h-2 rounded-full 
-        bg-black/30 
-        accent-black
-        cursor-pointer
+        mt-10 flex flex-col items-center gap-6 
+        px-6 py-6 rounded-2xl 
+        backdrop-blur-2xl 
+        bg-white/20 dark:bg-white/10 
+        border border-white/30 dark:border-white/20
+        shadow-xl
+        w-[360px] md:w-auto transform-gpu
       "
-    />
-  </div>
-);
+      style={{ marginTop: isMobile ? "3.5rem" : "0" }}
+    >
+      <div className="flex items-center gap-8 md:gap-12 text-black">
 
+        <button onClick={prev} aria-label="prev">
+          <SkipBack className="w-6 h-6 md:w-9 md:h-9 text-black" />
+        </button>
 
+        <button onClick={togglePlay} aria-label="play-pause">
+          {isPlaying ? (
+            <Pause className="w-8 h-8 md:w-12 md:h-12 text-black" />
+          ) : (
+            <Play className="w-8 h-8 md:w-12 md:h-12 text-black" />
+          )}
+        </button>
+
+        <button onClick={next} aria-label="next">
+          <SkipForward className="w-6 h-6 md:w-9 md:h-9 text-black" />
+        </button>
+
+        <div className="flex items-center gap-3">
+          <Volume2 className="w-5 h-5 md:w-8 md:h-8 text-black" />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            defaultValue={1}
+            onChange={(e) => setVolume(e.target.value)}
+            className="w-24 md:w-32 accent-black cursor-pointer"
+          />
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={0.1}
+        value={progress}
+        onChange={(e) => seek(e.target.value)}
+        className="
+          w-full md:w-[380px] h-2 rounded-full 
+          bg-black/30 
+          accent-black
+          cursor-pointer
+        "
+      />
+    </div>
+  );
 
   return (
     <div id="work" className="flex flex-col items-center pt-24 pb-24">
-      
+
       <p className="mt-6 mb-4 text-center leading-tight text-[15px] md:text-base font-geistLight opacity-80">
         Da clic en una cinta para{" "}
         <span className="font-estonia text-[19px] md:text-xl tracking-wide">
@@ -177,9 +173,7 @@ const PlayerUI = (
         los live sets de{" "}
         <span className="font-majorMono tracking-tight text-base md:text-lg">
           Lu
-          <span className="font-estonia lowercase text-lg md:text-xl align-baseline">
-            n
-          </span>
+          <span className="font-estonia lowercase text-lg md:text-xl align-baseline">n</span>
           <span className="font-majorMono">ARA</span>
         </span>
       </p>
@@ -189,7 +183,7 @@ const PlayerUI = (
           flex flex-col md:flex-row 
           gap-8 md:gap-16 
           mt-10
-          ${!isMobile && current ? "md:mb-20" : ""} 
+          ${!isMobile && current ? "md:mb-20" : ""}
         `}
       >
         {TRACKS.map((t) => (
