@@ -74,7 +74,7 @@ export default function Contact() {
   Contrata a{" "}
   <span className="font-majorMono tracking-tight text-base md:text-lg">
     Lu
-    <span className="font-estonia lowercase text-lg md:text-xl align-baseline">n</span>
+    <span className="font-estonia lowercase text-lg md:text-xl align-baseline">N</span>
     <span className="font-majorMono">ARA</span>
   </span>{" "}
   para tocar en tu evento y disfrutar su DJ set en vivo
@@ -118,14 +118,14 @@ export default function Contact() {
 
             <div className="flex flex-col gap-6 mt-10 text-lg w-full items-center">
               <a
-                href="mailto:example@gmail.com"
+                href="mailto:akarensdl@gmail.com"
                 className="flex items-center gap-4 px-5 py-3 rounded-xl border border-black dark:border-white transition-all duration-300 hover:scale-105 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
               >
                 <Mail size={26} /> Gmail
               </a>
 
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/karendelunaaa?igsh=MXJ1cGozZjI3eTJwMw=="
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-4 px-5 py-3 rounded-xl border border-black dark:border-white transition-all duration-300 hover:scale-105 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
@@ -141,7 +141,7 @@ export default function Contact() {
             
             <div className="flex flex-col gap-8 text-xl z-20">
               <a
-                href="mailto:example@gmail.com"
+                href="mailto:akarensdl@gmail.com"
                 className="flex items-center gap-4 px-5 py-3 rounded-xl border border-black dark:border-white transition-all duration-300 hover:scale-105 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
               >
                 <Mail size={30} /> Gmail

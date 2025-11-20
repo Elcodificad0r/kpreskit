@@ -226,13 +226,20 @@ export default function Work() {
       {!isMobile && current && PlayerUI}
 
       <iframe
-        ref={iframeRef}
-        width="0"
-        height="0"
-        style={{ display: "none" }}
-        src="https://w.soundcloud.com/player/?url="
-        allow="autoplay"
-      ></iframe>
+  ref={iframeRef}
+  width="1"
+  height="1"
+  style={{
+    opacity: 0,
+    pointerEvents: "none",
+    position: "absolute",
+    left: 0,
+    top: 0,
+  }}
+  src="https://w.soundcloud.com/player/?url="
+  allow="autoplay; encrypted-media"
+></iframe>
+
     </div>
   );
 }
