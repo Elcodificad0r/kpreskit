@@ -5,7 +5,7 @@ const TRACKS = [
   {
     id: 1,
     img: `${import.meta.env.BASE_URL}img/cassette1.webp`,
-    url: "https://api.soundcloud.com/tracks/2208278441"
+    url: "https://soundcloud.com/grecia-valadez-583436482/grex-lunara-b2b-sordeado-2308"
   },
   {
     id: 2,
@@ -18,6 +18,7 @@ const TRACKS = [
     url: "https://api.soundcloud.com/tracks/9876543210"
   }
 ];
+
 
 export default function Work() {
   const [current, setCurrent] = useState(null);
