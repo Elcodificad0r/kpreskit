@@ -28,34 +28,72 @@ export default function Work() {
 
   const iframeRef = useRef(null);
   const widgetRef = useRef(null);
+  const scLoadedRef = useRef(false);
 
   const isMobile = window.innerWidth <= 768;
 
+  // Cargar SoundCloud Widget API
   useEffect(() => {
-    if (iframeRef.current) {
-      widgetRef.current = window.SC.Widget(iframeRef.current);
+    if (!scLoadedRef.current) {
+      const script = document.createElement("script");
+      script.src = "https://w.soundcloud.com/player/api.js";
+      script.async = true;
+      document.body.appendChild(script);
 
-      widgetRef.current.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
-        if (!e.duration) return;
-        let p = (e.currentPosition / e.duration) * 100;
-        setProgress(Math.min(Math.max(p, 0), 100));
-      });
+      script.onload = () => {
+        scLoadedRef.current = true;
+      };
+    }
+  }, []);
 
-      widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => {
-        widgetRef.current.getDuration((d) => setDuration(d));
-      });
+  // Inicializar widget cuando SC esté listo
+  useEffect(() => {
+    const initWidget = () => {
+      if (window.SC && window.SC.Widget && iframeRef.current) {
+        widgetRef.current = window.SC.Widget(iframeRef.current);
+
+        widgetRef.current.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
+          if (!e.duration) return;
+          let p = (e.currentPosition / e.duration) * 100;
+          setProgress(Math.min(Math.max(p, 0), 100));
+        });
+
+        widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => {
+          widgetRef.current.getDuration((d) => setDuration(d));
+        });
+      }
+    };
+
+    if (window.SC) {
+      initWidget();
+    } else {
+      const checkSC = setInterval(() => {
+        if (window.SC && window.SC.Widget) {
+          initWidget();
+          clearInterval(checkSC);
+        }
+      }, 100);
+
+      return () => clearInterval(checkSC);
     }
   }, []);
 
   const loadTrack = (track) => {
+    if (!widgetRef.current) return;
+
     setCurrent(track);
     setProgress(0);
 
-    // 🔓 Desbloqueo de audio en mobile
-    try {
-      widgetRef.current.play();
-      widgetRef.current.pause();
-    } catch {}
+    // Desbloqueo de audio en mobile/iOS con interacción del usuario
+    if (isMobile) {
+      try {
+        const tempAudio = new Audio();
+        tempAudio.play().then(() => {
+          tempAudio.pause();
+          tempAudio.currentTime = 0;
+        }).catch(() => {});
+      } catch (e) {}
+    }
 
     widgetRef.current.load(track.url, {
       auto_play: true,
@@ -68,7 +106,6 @@ export default function Work() {
       show_user: false
     });
 
-    widgetRef.current.play();
     setIsPlaying(true);
   };
 
@@ -89,11 +126,13 @@ export default function Work() {
   };
 
   const setVolume = (v) => {
-    widgetRef.current.setVolume(v * 100);
+    if (widgetRef.current) {
+      widgetRef.current.setVolume(v * 100);
+    }
   };
 
   const seek = (value) => {
-    if (!duration) return;
+    if (!duration || !widgetRef.current) return;
     const ms = (value / 100) * duration;
     widgetRef.current.seekTo(ms);
     setProgress(value);
@@ -227,19 +266,20 @@ export default function Work() {
       {!isMobile && current && PlayerUI}
 
       <iframe
-  ref={iframeRef}
-  width="1"
-  height="1"
-  style={{
-    opacity: 0,
-    pointerEvents: "none",
-    position: "absolute",
-    left: 0,
-    top: 0,
-  }}
-  src="https://w.soundcloud.com/player/?url="
-  allow="autoplay; encrypted-media"
-></iframe>
+        ref={iframeRef}
+        width="1"
+        height="1"
+        style={{
+          opacity: 0,
+          pointerEvents: "none",
+          position: "absolute",
+          left: 0,
+          top: 0,
+        }}
+        src="https://w.soundcloud.com/player/?url="
+        allow="autoplay; encrypted-media"
+        title="SoundCloud Player"
+      />
 
     </div>
   );
