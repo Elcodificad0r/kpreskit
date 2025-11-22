@@ -19,7 +19,6 @@ const TRACKS = [
   }
 ];
 
-
 export default function Work() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,72 +27,42 @@ export default function Work() {
 
   const iframeRef = useRef(null);
   const widgetRef = useRef(null);
-  const scLoadedRef = useRef(false);
 
   const isMobile = window.innerWidth <= 768;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-  // Cargar SoundCloud Widget API
+  /** ---- LOAD THE PLAYER ONLY FOR DESKTOP / ANDROID ---- **/
   useEffect(() => {
-    if (!scLoadedRef.current) {
-      const script = document.createElement("script");
-      script.src = "https://w.soundcloud.com/player/api.js";
-      script.async = true;
-      document.body.appendChild(script);
+    if (isMobile) return; // ❌ no widget en mobile
 
-      script.onload = () => {
-        scLoadedRef.current = true;
-      };
+    if (iframeRef.current) {
+      widgetRef.current = window.SC.Widget(iframeRef.current);
+
+      widgetRef.current.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
+        if (!e.duration) return;
+        let p = (e.currentPosition / e.duration) * 100;
+        setProgress(Math.min(Math.max(p, 0), 100));
+      });
+
+      widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => {
+        widgetRef.current.getDuration((d) => setDuration(d));
+      });
     }
-  }, []);
+  }, [isMobile]);
 
-  // Inicializar widget cuando SC esté listo
-  useEffect(() => {
-    const initWidget = () => {
-      if (window.SC && window.SC.Widget && iframeRef.current) {
-        widgetRef.current = window.SC.Widget(iframeRef.current);
-
-        widgetRef.current.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
-          if (!e.duration) return;
-          let p = (e.currentPosition / e.duration) * 100;
-          setProgress(Math.min(Math.max(p, 0), 100));
-        });
-
-        widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => {
-          widgetRef.current.getDuration((d) => setDuration(d));
-        });
-      }
-    };
-
-    if (window.SC) {
-      initWidget();
-    } else {
-      const checkSC = setInterval(() => {
-        if (window.SC && window.SC.Widget) {
-          initWidget();
-          clearInterval(checkSC);
-        }
-      }, 100);
-
-      return () => clearInterval(checkSC);
-    }
-  }, []);
-
+  /** ---- LOAD TRACK ---- **/
   const loadTrack = (track) => {
-    if (!widgetRef.current) return;
-
     setCurrent(track);
-    setProgress(0);
 
-    // Desbloqueo de audio en mobile/iOS con interacción del usuario
-    if (isMobile) {
-      try {
-        const tempAudio = new Audio();
-        tempAudio.play().then(() => {
-          tempAudio.pause();
-          tempAudio.currentTime = 0;
-        }).catch(() => {});
-      } catch (e) {}
-    }
+    // En mobile NO cargamos widget → abrimos embed
+    if (isMobile) return;
+
+    // Desktop widget
+    setProgress(0);
+    try {
+      widgetRef.current.play();
+      widgetRef.current.pause();
+    } catch {}
 
     widgetRef.current.load(track.url, {
       auto_play: true,
@@ -106,9 +75,11 @@ export default function Work() {
       show_user: false
     });
 
+    widgetRef.current.play();
     setIsPlaying(true);
   };
 
+  /** ---- DESKTOP PLAYER CONTROLS ---- **/
   const togglePlay = () => {
     if (!widgetRef.current) return;
     isPlaying ? widgetRef.current.pause() : widgetRef.current.play();
@@ -126,20 +97,19 @@ export default function Work() {
   };
 
   const setVolume = (v) => {
-    if (widgetRef.current) {
-      widgetRef.current.setVolume(v * 100);
-    }
+    if (!widgetRef.current) return;
+    widgetRef.current.setVolume(v * 100);
   };
 
   const seek = (value) => {
-    if (!duration || !widgetRef.current) return;
+    if (!duration) return;
     const ms = (value / 100) * duration;
     widgetRef.current.seekTo(ms);
     setProgress(value);
   };
 
-  /** --- PLAYER UI --- */
-  const PlayerUI = (
+  /** ---- DESKTOP UI ---- **/
+  const PlayerUI = !isMobile && current && (
     <div
       className="
         mt-10 flex flex-col items-center gap-6 
@@ -150,7 +120,6 @@ export default function Work() {
         shadow-xl
         w-[360px] md:w-auto transform-gpu
       "
-      style={{ marginTop: isMobile ? "3.5rem" : "0" }}
     >
       <div className="flex items-center gap-8 md:gap-12 text-black">
 
@@ -184,7 +153,6 @@ export default function Work() {
         </div>
       </div>
 
-      {/* Progress bar */}
       <input
         type="range"
         min={0}
@@ -204,7 +172,6 @@ export default function Work() {
 
   return (
     <div id="work" className="flex flex-col items-center pt-24 pb-24">
-
       <p className="mt-6 mb-4 text-center leading-tight text-[15px] md:text-base font-geistLight opacity-80">
         Da clic en una cinta para{" "}
         <span className="font-estonia text-[19px] md:text-xl tracking-wide">
@@ -218,14 +185,7 @@ export default function Work() {
         </span>
       </p>
 
-      <div
-        className={`
-          flex flex-col md:flex-row 
-          gap-8 md:gap-16 
-          mt-10
-          ${!isMobile && current ? "md:mb-20" : ""}
-        `}
-      >
+      <div className="flex flex-col md:flex-row gap-8 md:gap-16 mt-10">
         {TRACKS.map((t) => (
           <div key={t.id} className="flex flex-col items-center">
             <div
@@ -236,51 +196,54 @@ export default function Work() {
                 md:w-[260px] md:h-[360px]
                 rounded-2xl overflow-hidden
                 transition-all duration-500 ease-out
-
-                ${
-                  current?.id === t.id
-                    ? "scale-125 shadow-2xl backdrop-blur-2xl bg-white/20 dark:bg-white/10 animate-[pulse_6s_ease_infinite]"
-                    : "hover:scale-[1.30] hover:shadow-2xl"
+                
+                ${current?.id === t.id
+                  ? "scale-125 shadow-2xl backdrop-blur-2xl bg-white/20 dark:bg-white/10 animate-[pulse_6s_ease_infinite]"
+                  : "hover:scale-[1.30] hover:shadow-2xl"
                 }
-
-                ${current && current.id !== t.id ? "md:translate-x-2" : ""}
               `}
-              style={{
-                background:
-                  current?.id === t.id
-                    ? "linear-gradient(135deg, rgba(255,165,140,0.35), rgba(235,140,150,0.35))"
-                    : "transparent"
-              }}
             >
-              <img
-                src={t.img}
-                className="w-full h-full object-contain transition-all duration-500 opacity-95"
-              />
+              <img src={t.img} className="w-full h-full object-contain opacity-95" />
             </div>
 
-            {isMobile && current?.id === t.id && PlayerUI}
+            {/* MOBILE: Embed Oficial */}
+            {isMobile && current?.id === t.id && (
+              <iframe
+                width="100%"
+                height="300"
+                scrolling="no"
+                frameBorder="no"
+                allow="autoplay"
+                className="rounded-xl mt-4"
+                src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(
+                  t.url
+                )}&color=%23d19c3b&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+              ></iframe>
+            )}
           </div>
         ))}
       </div>
 
-      {!isMobile && current && PlayerUI}
+      {/* DESKTOP PLAYER */}
+      {PlayerUI}
 
-      <iframe
-        ref={iframeRef}
-        width="1"
-        height="1"
-        style={{
-          opacity: 0,
-          pointerEvents: "none",
-          position: "absolute",
-          left: 0,
-          top: 0,
-        }}
-        src="https://w.soundcloud.com/player/?url="
-        allow="autoplay; encrypted-media"
-        title="SoundCloud Player"
-      />
-
+      {/* INVISIBLE IFRAME ONLY DESKTOP */}
+      {!isMobile && (
+        <iframe
+          ref={iframeRef}
+          width="1"
+          height="1"
+          style={{
+            opacity: 0,
+            pointerEvents: "none",
+            position: "absolute",
+            left: 0,
+            top: 0,
+          }}
+          src="https://w.soundcloud.com/player/?url="
+          allow="autoplay; encrypted-media"
+        ></iframe>
+      )}
     </div>
   );
 }
